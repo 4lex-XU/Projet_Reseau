@@ -1,6 +1,8 @@
-from Ethernet import lectureEthernet
-from IPv4 import lectureIPv4
-from TCP import lectureTCP
+import sys
+sys.path.append("..")
+from Lecteurs.Ethernet import *
+from Lecteurs.IPv4 import *
+from Lecteurs.TCP import *
 
 #test
 trame = "00 00 00 00 00 00 00 00 00 00 00 00 08 00 45 00 00 3c b9 57 40 00 40 06 83 62 7f 00 00 01 7f 00 00 01 c9 3e ff 98 d7 79 f1 e0 00 00 00 00 a0 02 ff d7 fe 30 00 00 02 04 ff d7 04 02 08 0a 56 2a d7 83 00 00 00 00 01 03 03 0a"

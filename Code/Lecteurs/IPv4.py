@@ -17,5 +17,3 @@ def lectureIPv4(trame):
         if(RR == "07"):
             print("Option Record Route")
     return (IHL, protocol, IPSrc, IPDest)
-
-
