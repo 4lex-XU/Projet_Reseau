@@ -9,7 +9,7 @@ def lectureIPv4(trame):
         option = True
     total_length = trame[32:36]
     TTL = trame[44:46]
-    protocol = trame[46:48]
+    protocol = trame[46:48] # 06 = TCP, 11 = UDP
     IPSrc = trame[52:60]
     IPDest = trame[60:68]
     return (IHL, protocol, IPSrc, IPDest)
