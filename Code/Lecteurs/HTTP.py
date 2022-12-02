@@ -1,3 +1,7 @@
+import sys
+sys.path.append("..")
+from Convertisseurs.hexaToASCII import *
+
 def lectureHTTPreq(trame) :
     # determine la méthode de la requête
     indiceMeth = trame.find("20")
@@ -8,8 +12,8 @@ def lectureHTTPreq(trame) :
     contenu = trame[indiceMeth+2:indiceAddVer]
     
     # transforme le code hexa en ascii
-    methode = bytes.fromhex(methode).decode('ascii')
-    contenu = bytes.fromhex(contenu).decode('ascii')
+    methode = hexaToASCII(methode)
+    contenu = hexaToASCII(contenu)
     
     return (methode, contenu)
     
@@ -22,9 +26,9 @@ def lectureHTTPrep(trame) :
     indiceMsg = trame.find("0d0a")
     
     # transforme le code hexa en ascii
-    version = bytes.fromhex(trame[0:indiceVer]).decode('ascii')
-    code = bytes.fromhex(trame[indiceVer+2:indiceCode]).decode('ascii')
-    message = bytes.fromhex(trame[indiceCode+2:indiceMsg]).decode('ascii')
+    version = hexaToASCII(trame[0:indiceVer])
+    code = hexaToASCII(trame[indiceVer+2:indiceCode])
+    message = hexaToASCII(trame[indiceCode+2:indiceMsg])
     
     return (version, code, message)
     
