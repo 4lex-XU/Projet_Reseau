@@ -27,3 +27,8 @@ if(ip[1] == "06"):
     print(tcp[0])
     print(tcp[1])
     print(tcp[2])
+    print(tcp[3])
+    print(tcp[4])
+    print(tcp[5])
+    print(tcp[6])
+    print(tcp[7])
