@@ -7,9 +7,10 @@ from Lecteurs.TCP import *
 from Lecteurs.HTTP import *
 from Lecteurs.trames import *
 from Convertisseurs.decimale import *
-"""
+from Interface.interface import*
+
 # on obtient le tableau des différentes trames
-Trames = diviseurDeTrame("../../Trames/tcp.txt")
+Trames = diviseurDeTrame("../../Trames/tcp_complet.txt")
 
 #declaration des tableaux 
 Tab_PortSrc = []
@@ -20,6 +21,7 @@ Tab_Comment = []
 data_length = 0
 SN = 0
 AN = 0
+WS = 0
 
 for trame in Trames :
     MACdst, MACsrc, type = lectureEthernet(trame)
@@ -60,12 +62,14 @@ for trame in Trames :
                     #TRAITEMENT DES FLAGS
                     #SYN
                     if(FLAGS == ("0","0","0","0","1","0")):
+                        WS = OPT[4]
+                        data_length = 0
                         SN = 0
                         AN = 0
-                        data_length = 0
-                        Comment += " SN = 0"
+                        Comment += " SN = " + str(SN)
                     #SYN/ACK
                     if(FLAGS == ("0","1","0","0","1","0")):
+                        WS = OPT[4]
                         AN = SN+1
                         Comment += " SN = " + str(SN) + " AN = " + str(AN)
                         SN += 1
@@ -94,11 +98,17 @@ for trame in Trames :
                         AN = tmp
                         Comment += " SN = " + str(SN) + " AN = " + str(AN)
                         SN += 1
-                        
+                    
+                    #CALCUL DE WINDOW
+                    if(FLAGS[4] == "0"):
+                        Win = Win*WS
+
                     Comment += " Win = " + str(Win) + " Data_length = " + str((len(data))//2) + " MSS = " + str(OPT[0])
+                    
                     #SACK Permitted
                     if(OPT[1] == 1):
                         Comment += " SACK_PERM"
+
                     Comment += " TSval = " + str(OPT[2]) + " TSecr = " + str(OPT[3]) + " WS = " + str(OPT[4])
 
                 elif(HTTP == 0): #REQUEST
@@ -108,9 +118,10 @@ for trame in Trames :
                     version, code, message = lectureHTTPrep(trame[THL:])
                     Comment = "HTTP: " + version + " " + code + " " + message
                 #AJOUT DU COMMENTAIRE DANS LE TABLEAU
-                #print(Comment)
+                print(Comment)
                 Tab_Comment.append(Comment)
 
 #print(Tab_PortSrc)
 #print(Tab_PortDest)
 #print(Tab_Comment)
+#interface (IPv4_dec(IPSrc), IPv4_dec(IPDest), Tab_Comment, Tab_PortSrc, Tab_PortDest)

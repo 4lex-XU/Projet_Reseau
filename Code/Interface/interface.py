@@ -11,6 +11,7 @@ def interface (IP1, IP2, commentaire, portsrc, portdst) :
     fenetre = Tk()
     fenetre.title("Visualisateur de trafic réseau")
     fenetre.geometry("1000x600")
+    fenetre.resizable(FALSE, FALSE)
     
     # treeview 3 colonnes
     tree = Treeview(fenetre, columns=(IP1, "flèches", IP2, "Comment"), show="headings")
@@ -27,10 +28,13 @@ def interface (IP1, IP2, commentaire, portsrc, portdst) :
     # pour que le tableau prenne toute la fenêtre
     tree.pack(fill=BOTH, expand=1)
 
-    # ajout d'une barre de défilement
+    # ajout d'une barre de défilement vertical
     scrollbar = Scrollbar(fenetre, orient = "vertical", command=tree.yview)
     scrollbar.place(x = 983, y = 0, height = 600)
     tree.configure(yscrollcommand=scrollbar.set)
+
+    # ajout d'une barre de défilement horizontal
+    
 
     # ajout d'une trame
     for i in range (0, len(portsrc)):

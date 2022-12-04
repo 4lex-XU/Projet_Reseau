@@ -60,9 +60,6 @@ def lectureTCP(trame):
                 b += length
             b += 2
         OPT = (MSS, SACK, TSval, TSecr, WS)
-        #CALCUL DE WINDOW
-        if(SYN == 0):
-            Win = Win*WS
     else:
         data = trame[40:]
     return (HTTP, PortSrc, PortDest, THL, FLAGS, Win, OPT, data)
