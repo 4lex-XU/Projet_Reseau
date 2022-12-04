@@ -10,7 +10,7 @@ from Convertisseurs.decimale import *
 from Interface.interface import *
 
 # on obtient le tableau des différentes trames
-Trames = diviseurDeTrame("../../Trames/tcp_complet.txt")
+Trames = diviseurDeTrame("../../Trames/"+sys.argv[1])
 
 #declaration des tableaux 
 Tab_PortSrc = []
