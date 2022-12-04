@@ -7,7 +7,7 @@ from Lecteurs.TCP import *
 from Lecteurs.HTTP import *
 from Lecteurs.trames import *
 from Convertisseurs.decimale import *
-"""
+
 # on obtient le tableau des différentes trames
 Trames = diviseurDeTrame("../../Trames/tcp.txt")
 
