@@ -12,4 +12,7 @@ def lectureIPv4(trame):
     protocol = trame[46:48] # 06 = TCP, 11 = UDP
     IPSrc = trame[52:60]
     IPDest = trame[60:68]
+    if(protocol != "06"):
+        print("Le protocole ne correspond pas a TCP")
+        return None
     return (IHL, protocol, IPSrc, IPDest)
