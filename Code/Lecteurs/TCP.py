@@ -2,7 +2,7 @@
 def lectureTCP(trame):
     HTTP = -1
     PortSrc = trame[0:4]
-    #ECHO REPLY = 1
+    #REPLY = 1
     if(PortSrc == "0050"):
         HTTP = 1
     PortDest = trame[4:8]
@@ -25,7 +25,7 @@ def lectureTCP(trame):
     SYN = binaire[10]
     FIN = binaire[11]
     FLAGS = (URG,ACK,PSH,RST,SYN,FIN)
-    Win = trame[28:32]
+    Win = int(trame[28:32],16)
     if(THL != "5"):
         #Option(s) TCP presente
         index = int(THL,16)
@@ -34,7 +34,7 @@ def lectureTCP(trame):
         #TRAITEMENT DES OPTIONS
         option = trame[40:fin_entete]
         b = 0
-        MSS, SACK, TSval, TSecr = (0,0,0,0)
+        MSS, SACK, TSval, TSecr, WS = (0,0,0,0,0)
         while(b < fin_entete):
             if(option[b:b+4] == "0204"):
                 #Maximum Segment Size
@@ -56,13 +56,13 @@ def lectureTCP(trame):
             if(option[b:b+4] == "0303"):
                 #WindowScale
                 length = int(option[b+2:b+4],16)*2
-                Win_scale = int(option[b+4:b+length],16)
+                WS = pow(2,int(option[b+4:b+length],16))
                 b += length
             b += 2
-        OPT = (MSS, SACK, TSval, TSecr)
+        OPT = (MSS, SACK, TSval, TSecr, WS)
         #CALCUL DE WINDOW
         if(SYN == 0):
-            Win = int(Win,16)*pow(2,Win_scale)
+            Win = Win*WS
     else:
         data = trame[40:]
     return (HTTP, PortSrc, PortDest, THL, FLAGS, Win, OPT, data)

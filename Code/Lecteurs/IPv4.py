@@ -1,7 +1,7 @@
 def lectureIPv4(trame):
     if(trame[28] != "4"):
-        #La version de la trame ne correspond pas a IPv4
-        return (0,0,0,0)
+        print("La version de IP ne correspond pas a IPv4")
+        return None
     IHL = trame[29]
     option = False
     if(IHL != "5"):
