@@ -3,6 +3,9 @@ sys.path.append("..")
 from Convertisseurs.hexaToASCII import *
 
 def lectureHTTPreq(trame) :
+    if(trame is None):
+        print("Trame vide")
+        return None
     # determine la méthode de la requête
     indiceMeth = trame.find("20")
     methode = trame[0:indiceMeth]
@@ -18,6 +21,9 @@ def lectureHTTPreq(trame) :
     return (methode, contenu)
     
 def lectureHTTPrep(trame) :
+    if(trame is None):
+        print("Trame vide")
+        return None
     # détermine la version 
     indiceVer = trame.find("20")
     # détermine le code de réponse
