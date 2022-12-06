@@ -1,5 +1,11 @@
+import sys
+sys.path.append("..")
+from Convertisseurs.hexaToBinary import *
 
 def lectureTCP(trame):
+    if(trame is None):
+        print("Trame vide")
+        return None
     HTTP = -1
     PortSrc = trame[0:4]
     #REPLY = 1
@@ -11,21 +17,18 @@ def lectureTCP(trame):
         HTTP = 0
     #SI HTTP = -1 ALORS PAS DE CONNEXION A UN SERVEUR WEB (HTTP)
     THL = trame[24]
-    Etat = trame[25:28]
-    #CONVERSION BINAIRE
-    binaire = ""
-    for i in Etat:
-        hexa_to_dec = int(i,16)
-        binaire += bin(hexa_to_dec)[2:].zfill(4)
-    #print(binaire)
-    URG = binaire[6]
-    ACK = binaire[7]
-    PSH = binaire[8]
-    RST = binaire[9]
-    SYN = binaire[10]
-    FIN = binaire[11]
+    Etat = hexaToBinary(trame[25:28])
+    URG = Etat[6]
+    ACK = Etat[7]
+    PSH = Etat[8]
+    RST = Etat[9]
+    SYN = Etat[10]
+    FIN = Etat[11]
     FLAGS = (URG,ACK,PSH,RST,SYN,FIN)
     Win = int(trame[28:32],16)
+    #initialisation des variables pour le traitement des options
+    MSS, SACK, TSval, TSecr, WS = (0,0,0,0,0)
+    OPT = (MSS, SACK, TSval, TSecr, WS)
     if(THL != "5"):
         #Option(s) TCP presente
         index = int(THL,16)
@@ -34,7 +37,6 @@ def lectureTCP(trame):
         #TRAITEMENT DES OPTIONS
         option = trame[40:fin_entete]
         b = 0
-        MSS, SACK, TSval, TSecr, WS = (0,0,0,0,0)
         while(b < fin_entete):
             if(option[b:b+4] == "0204"):
                 #Maximum Segment Size
