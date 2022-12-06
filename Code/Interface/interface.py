@@ -190,7 +190,7 @@ def interface (IPportsrc, IPportdst, commentaire, nom_fichier="") :
     # pour que le tableau prenne toute la fenêtre
     tree.pack(fill=BOTH, expand=1)
 
-    # ajout d'une barre de défilement
+    # ajout d'une barre de défilement vertical
     scrollbar = Scrollbar(fenetre, orient = "vertical", command=tree.yview)
     scrollbar.place(x = 983, y = 0, height = 600)
     tree.configure(yscrollcommand=scrollbar.set)
