@@ -16,7 +16,7 @@ def lectureTCP(trame):
     if(PortDest == "0050"):
         HTTP = 0
     #SI HTTP = -1 ALORS PAS DE CONNEXION A UN SERVEUR WEB (HTTP)
-    THL = trame[24]
+    THL = int(trame[24],16)
     Etat = hexaToBinary(trame[25:28])
     URG = Etat[6]
     ACK = Etat[7]
@@ -29,10 +29,9 @@ def lectureTCP(trame):
     #initialisation des variables pour le traitement des options
     MSS, SACK, TSval, TSecr, WS = (0,0,0,0,0)
     OPT = (MSS, SACK, TSval, TSecr, WS)
-    if(THL != "5"):
+    if(THL > 5):
         #Option(s) TCP presente
-        index = int(THL,16)
-        fin_entete = index*8
+        fin_entete = THL*8
         data = trame[fin_entete:]
         #TRAITEMENT DES OPTIONS
         option = trame[40:fin_entete]

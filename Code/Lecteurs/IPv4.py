@@ -22,7 +22,7 @@ def lectureIPv4(trame):
     MF = fragment[2]
     offset = int(fragment[3:],2)
     #print(offset)
-    TTL = trame[44:46]
+    TTL = int(trame[44:46],16)
     protocol = trame[46:48] # 06 = TCP, 11 = UDP
     IPSrc = trame[52:60]
     IPDest = trame[60:68]
