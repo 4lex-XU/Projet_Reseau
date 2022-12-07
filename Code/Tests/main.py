@@ -81,7 +81,7 @@ for trame in Trames :
 
                 debut_http = debut_tcp + THL*8
                 #TEST HTTP
-                if(HTTP == -1):
+                if((HTTP == -1) or (TotalLength == THL*4)):
                     Comment = "TCP: " + port_dec(PortSrc) + " -> " + port_dec(PortDest)
                     flags = "["
                     if(FLAGS[0] == "1"):
@@ -170,4 +170,4 @@ for trame in Trames :
 #print(Tab_PortSrc)
 #print(Tab_PortDest)
 #print(Tab_Comment)
-interface (Tab_PortSrc, Tab_PortDest, Tab_Comment, sys.argv[2])
+#interface (Tab_PortSrc, Tab_PortDest, Tab_Comment, sys.argv[2])

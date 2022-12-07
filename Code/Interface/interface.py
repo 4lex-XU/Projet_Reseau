@@ -38,8 +38,8 @@ def interface (IPportsrc, IPportdst, commentaire, nom_fichier="") :
             filtreIPportdstBouble = []
             j=0
             for c in filtreCom :
-                i = c.find(":")
-                if (protocole == c[0:i]) :
+                i = c[0].find(":")
+                if (protocole == c[0][0:i]) :
                     filtreComBouble.append(c)
                     filtreIPportsrcBouble.append(filtreIPportsrc[j])
                     filtreIPportdstBouble.append(filtreIPportdst[j])
@@ -69,7 +69,7 @@ def interface (IPportsrc, IPportdst, commentaire, nom_fichier="") :
             canvas.create_window(35 + 120*(filtreIP.index(i[0])), 80 + 20*(indice), anchor=NW, window=port1)
             port2 = Label(canvas, text = j[1])
             canvas.create_window(35 + 120*(filtreIP.index(j[0])), 80 + 20*(indice), anchor=NW, window=port2)
-            com = Label(canvas, text = filtreCom[indice])
+            com = Label(canvas, text = filtreCom[indice][0])
             canvas.create_window(10 + 120*(len(filtreIP)), 80 + 20*(indice), anchor=NW, window=com)
             indice += 1
             
@@ -136,7 +136,7 @@ def interface (IPportsrc, IPportdst, commentaire, nom_fichier="") :
         canvas.create_window(35 + 120*(IP.index(i[0])) , 80 + 20*(indice), anchor=NW, window=port1)
         port2 = Label(canvas, text = j[1])
         canvas.create_window(35 + 120*(IP.index(j[0])), 80 + 20*(indice), anchor=NW, window=port2)
-        com = Label(canvas, text = commentaire[indice])
+        com = Label(canvas, text = commentaire[indice][0])
         canvas.create_window(10 + 120*(len(IP)), 80 + 20*(indice), anchor=NW, window=com)
         indice += 1
         # ecriture dans le fichier texte
