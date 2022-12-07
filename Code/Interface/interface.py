@@ -157,41 +157,6 @@ def interface (IPportsrc, IPportdst, commentaire, nom_fichier="") :
             
     fichier.close()
     
-    
-    """
-    # treeview de len(IP) colonnes
-    tree = treeview(IP, fenetre)
-    
-    # pour que le tableau prenne toute la fenêtre
-    tree.pack(fill=BOTH, expand=1)
-
-    # ajout d'une barre de défilement vertical
-    scrollbar = Scrollbar(fenetre, orient = "vertical", command=tree.yview)
-    scrollbar.place(x = 983, y = 0, height = 600)
-    tree.configure(yscrollcommand=scrollbar.set)
-
-    # ajout d'une barre de défilement horizontale
-    scrollbar2 = Scrollbar(fenetre, orient = "horizontal", command=tree.xview)
-    scrollbar2.place(x = 0, y = 583, width = 983)
-    tree.configure(xscrollcommand=scrollbar2.set)
-    """
-    """
-    # ajout d'une trame
-    for i in range (0, len(portsrc)):
-        # si le port source est le port de IP1
-        if(portsrc[i] == portg) :
-        # ajouter une  flèche de IP1 vers IP2, avec un commentaire
-            tree.insert("", "end", values=(portg[1],"----------------->", portd[1], commentaire[i]))
-        else :
-        # ajouter une  flèche de IP2 vers IP1, avec un commentaire
-            tree.insert("", "end", values=(portg[1],"<-----------------", portd[1], commentaire[i]))
-            
-    # écriture dans le fichier texte
-    fichier.write(portg[0] + "                                                          " + portd[0] + "   Comment\n\n")
-    for child in tree.get_children():
-        fichier.write(str(tree.item(child)["values"]) + " \n") 
-    fichier.close()
-    """
     #ouvre l'interface graphique
     fenetre.mainloop()    
     
