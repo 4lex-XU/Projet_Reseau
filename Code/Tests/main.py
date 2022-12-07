@@ -29,20 +29,23 @@ port1 = 0
 port2 = 0
 
 for trame in Trames :
+    dernier = TRUE #DERNIER COUCHE 
     #TEST ETHERNET
     if(lectureEthernet(trame) != None):
         MACdst, MACsrc, type = lectureEthernet(trame)
-        
-        #Comment = "Ethernet: " + MACsrc + " -> " + MACdst + " type = " + type
-        #if(MAC_dec(MACdst) == "255:255:255:255:255:255"):
-        #    Comment += " [Broadcast]"
+        Comment = "Ethernet: " + MACsrc + " -> " + MACdst + " type = " + type
+        if(MAC_dec(MACdst) == "255:255:255:255:255:255"):
+            Comment += " [Broadcast]"
 
         #TEST VERSION IPv4
         if(type != "0800"):
             print("Le type ne correspond pas a IP")
+            Comment += " [TYPE DOES'T MATCH IP]"
+            dernier = FALSE
         elif(lectureIPv4(trame) != None):
             IHL, protocol, IPSrc, IPDest, option, TotalLength, DF, MF, offset, TTL = lectureIPv4(trame)
-            Comment = "IPv4: " + IPv4_dec(IPSrc) + " -> " + IPv4_dec(IPDest) + " protocol = " + protocol + " TTL = " + TTL
+            Comment = "IPv4: " + IPv4_dec(IPSrc) + " -> " + IPv4_dec(IPDest) + " protocol = " + protocol + " TTL = " + str(TTL)
+            
             if(option):
                 Comment += " [Option]"
             else:
@@ -61,12 +64,14 @@ for trame in Trames :
             elif(offset%data_fragment == 0):
                 Comment += " Offset = " + str(offset) + " [Last fragment]"
                 data_fragment = 0
-            
+
             #TEST ENTETE TCP
             fin_ip = IHL * 8
             debut_tcp = 28 + fin_ip
             if(protocol != "06"):
                 print("Le protocole ne correspond pas a TCP")
+                Comment += " [PROTOCOL DOES'T MATCH TCP]"
+                dernier = FALSE
             elif(lectureTCP(trame[debut_tcp:]) != None):
                 HTTP, PortSrc, PortDest, THL, FLAGS, Win, OPT, data = lectureTCP(trame[debut_tcp:])
 
@@ -74,8 +79,9 @@ for trame in Trames :
                 Tab_PortSrc.append((IPv4_dec(IPSrc), port_dec(PortSrc)))
                 Tab_PortDest.append((IPv4_dec(IPDest), port_dec(PortDest)))
 
+                debut_http = debut_tcp + THL*8
                 #TEST HTTP
-                if(HTTP == -1):
+                if((HTTP == -1) or (TotalLength == THL*4)):
                     Comment = "TCP: " + port_dec(PortSrc) + " -> " + port_dec(PortDest)
                     flags = "["
                     if(FLAGS[0] == "1"):
@@ -148,20 +154,20 @@ for trame in Trames :
                         Comment += " SACK_PERM"
 
                     Comment += " TSval = " + str(OPT[2]) + " TSecr = " + str(OPT[3]) + " WS = " + str(OPT[4])
-
+                  
                 elif(HTTP == 0): #REQUEST
-                    if(lectureHTTPreq(trame[THL:]) != None):
-                        methode, contenu = lectureHTTPreq(trame[THL:])
+                    if(lectureHTTPreq(trame[debut_http:]) != None):
+                        methode, contenu = lectureHTTPreq(trame[debut_http:])
                         Comment = "HTTP: " + methode + " " + contenu
                 else: #REPLY
-                    if(lectureHTTPrep(trame[THL:]) != None):
-                        version, code, message = lectureHTTPrep(trame[THL:])
+                    if(lectureHTTPrep(trame[debut_http:]) != None):
+                        version, code, message = lectureHTTPrep(trame[debut_http:])
                         Comment = "HTTP: " + version + " " + code + " " + message
-            #AJOUT DU COMMENTAIRE DANS LE TABLEAU
-            print(Comment)
-            Tab_Comment.append(Comment)
+        #AJOUT DU COMMENTAIRE DANS LE TABLEAU
+        #print(Comment)
+        Tab_Comment.append((Comment, dernier))
 
 #print(Tab_PortSrc)
 #print(Tab_PortDest)
 #print(Tab_Comment)
-#interface (IPv4_dec(IPSrc), IPv4_dec(IPDest), Tab_Comment, Tab_PortSrc, Tab_PortDest)
+#interface (Tab_PortSrc, Tab_PortDest, Tab_Comment, sys.argv[2])
