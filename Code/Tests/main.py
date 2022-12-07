@@ -164,7 +164,7 @@ for trame in Trames :
                         version, code, message = lectureHTTPrep(trame[debut_http:])
                         Comment = "HTTP: " + version + " " + code + " " + message
         #AJOUT DU COMMENTAIRE DANS LE TABLEAU
-        print(Comment)
+        #print(Comment)
         Tab_Comment.append((Comment, dernier))
 
 #print(Tab_PortSrc)
