@@ -25,16 +25,20 @@ def lectureHTTPrep(trame) :
         print("Trame vide")
         return None
     # détermine la version 
-    indiceVer = trame.find("20")
+    indiceVer = trame.find("20") # espace
     # détermine le code de réponse
-    indiceCode = trame.find("20", indiceVer+2)
+    indiceCode = trame.find("20", indiceVer+2) # espace
     # détermine le message de réponse
-    indiceMsg = trame.find("0d0a")
+    indiceMsg = trame.find("0d0a") # saut de ligne
+    # détermine le type de contenu 
+    indiceContentType1 = trame.find("436f6e74656e742d547970653a20") # Content-Type:
+    indiceContentType2 = trame.find("0d0a", indiceContentType1) # saut de ligne
     
     # transforme le code hexa en ascii
     version = hexaToASCII(trame[0:indiceVer])
     code = hexaToASCII(trame[indiceVer+2:indiceCode])
     message = hexaToASCII(trame[indiceCode+2:indiceMsg])
+    contentType = hexaToASCII(trame[indiceContentType1+28:indiceContentType2])
     
-    return (version, code, message)
+    return (version, code, message, contentType)
     
