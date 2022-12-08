@@ -30,7 +30,7 @@ WS2 = 0
 port1 = 0
 port2 = 0
 #Fragmentation au niveau TCP
-PSH = 0
+REQUEST = 0
 SN_Frag = 0
 AN_Frag = 0
 port_Frag = 0
@@ -41,7 +41,7 @@ premier = TRUE
 FRAG = 0
 
 for trame in Trames :
-    if(PSH == 0):
+    if(REQUEST == 0):
         FRAG = 0
     dernier = TRUE #DERNIER COUCHE 
     #TEST ETHERNET
@@ -95,7 +95,7 @@ for trame in Trames :
                 debut_http = debut_tcp + THL*8
 
                 #FRAGMENTATION TCP
-                if(PSH == 1):
+                if(REQUEST == 1):
                     if(premier):
                         port_Frag = port_dec(PortSrc)
                         HTTP_Frag = trame[debut_http:]
@@ -110,7 +110,7 @@ for trame in Trames :
                         Comment_Frag = "HTTP: " + version + " " + code + " " + message + " " + contentType
                         Tab_Comment.append((Comment_Frag, dernier))
                         FRAG = 1
-                        PSH = 0
+                        REQUEST = 0
                         SN_Frag = 0
                         AN_Frag = 0
                         port_Frag = 0
@@ -129,11 +129,6 @@ for trame in Trames :
                     flags += " ACK"
                 if(FLAGS[2] == "1"):
                     flags += " PSH"
-                    if(FRAG == 0):
-                        PSH = 1
-                        SN_Frag = SN
-                        AN_Frag = AN
-                        data_Frag = data_length
                 if(FLAGS[3] == "1"):
                     flags += " RST"
                 if(FLAGS[4] == "1"):
@@ -169,8 +164,14 @@ for trame in Trames :
                         flags += " SN = " + str(SN) + " AN = " + str(AN)
                 #PUSH/ACK
                 if(FLAGS == ("0","1","1","0","0","0")):
-                    SN = SN+data_length
-                    flags += " SN = " + str(SN) + " AN = " + str(AN)
+                    if(port_prec == port_dec(PortSrc)):
+                        SN = SN+data_length
+                        flags += " SN = " + str(SN) + " AN = " + str(AN)
+                    else:
+                        tmp = SN
+                        SN = AN
+                        AN = tmp+data_length
+                        flags += " SN = " + str(SN) + " AN = " + str(AN)
                 
                 data_length = len(data)//2
 
@@ -181,11 +182,16 @@ for trame in Trames :
                     SN += 1
                 #FIN/ACK
                 if(FLAGS == ("0","1","0","0","0","1")):
-                    tmp = SN
-                    SN = AN
-                    AN = tmp
-                    flags += " SN = " + str(SN) + " AN = " + str(AN)
-                    SN += 1
+                    if(port_prec == port_dec(PortSrc)):
+                        SN = SN+data_length
+                        flags += " SN = " + str(SN) + " AN = " + str(AN)
+                        SN += 1
+                    else:
+                        tmp = SN
+                        SN = AN
+                        AN = tmp+data_length
+                        flags += " SN = " + str(SN) + " AN = " + str(AN)
+                        SN += 1
                 port_prec = port_dec(PortSrc)
 
                 #TEST HTTP
@@ -213,6 +219,11 @@ for trame in Trames :
                     if(lectureHTTPreq(trame[debut_http:]) != None):
                         methode, contenu = lectureHTTPreq(trame[debut_http:])
                         Comment = "HTTP: " + methode + " " + contenu
+                        if(FRAG == 0):
+                            REQUEST = 1
+                            SN_Frag = SN
+                            AN_Frag = AN
+                            data_Frag = data_length
                 elif (FRAG == 0): #REPLY
                     if(lectureHTTPrep(trame[debut_http:]) != None):
                         version, code, message, contentType = lectureHTTPrep(trame[debut_http:])

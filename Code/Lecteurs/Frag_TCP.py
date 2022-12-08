@@ -72,7 +72,7 @@ def fragmentation_tcp(Trames, SN, AN, data_length, WS1, WS2, port1, port2, port_
 
                     Comment += " TSval = " + str(OPT[2]) + " TSecr = " + str(OPT[3]) + " WS = " + str(OPT[4]) 
                     if(port_Frag == port_dec(PortSrc)):
-                        Comment += " [FRAGMENTATION]"
+                        Comment += " [TCP segment of a reassembled PDU]"
                     
             #AJOUT DU COMMENTAIRE DANS LE TABLEAU
             Tab_Comment.append((Comment, dernier))
