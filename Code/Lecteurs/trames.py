@@ -27,7 +27,8 @@ def diviseurDeTrame(fichier) :
             trame = ""
             new_trame = False
         # on ajoute la ligne à la trame sans offset
-        trame += ligne[7:-1]
+        indice = ligne.find("   ", 7)   # si il y a des ascii à la fin de la ligne, on ne prend en compte que les octets en hexadécimal
+        trame += ligne[7:indice]
         # on enlève la condition de la 1ère trame
         i+=1
         
@@ -35,4 +36,3 @@ def diviseurDeTrame(fichier) :
     trames.append(trame.replace(" ",""))
     
     return trames
-
