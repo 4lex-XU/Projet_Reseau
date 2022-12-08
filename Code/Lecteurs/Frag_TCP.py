@@ -14,7 +14,6 @@ Tab_Comment = []
 
 def fragmentation_tcp(Trames, SN, AN, data_length, WS1, WS2, port1, port2, port_prec, port_Frag):
     for trame in Trames :
-        dernier = TRUE #DERNIER COUCHE 
         #TEST ETHERNET
         if(lectureEthernet(trame) != None):
             MACdst, MACsrc, type = lectureEthernet(trame)
@@ -22,7 +21,6 @@ def fragmentation_tcp(Trames, SN, AN, data_length, WS1, WS2, port1, port2, port_
              #TEST VERSION IPv4
             if(type != "0800"):
                 print("Le type ne correspond pas a IP")
-                dernier = FALSE
             elif(lectureIPv4(trame) != None):
                 IHL, protocol, IPSrc, IPDest, option, TotalLength, DF, MF, offset, TTL = lectureIPv4(trame)
 
@@ -31,13 +29,12 @@ def fragmentation_tcp(Trames, SN, AN, data_length, WS1, WS2, port1, port2, port_
                 debut_tcp = 28 + fin_ip
                 if(protocol != "06"):
                     print("Le protocole ne correspond pas a TCP")
-                    dernier = FALSE
                 elif(lectureTCP(trame[debut_tcp:]) != None):
                     HTTP, PortSrc, PortDest, THL, FLAGS, Win, OPT, data = lectureTCP(trame[debut_tcp:])
-
+                    #VERIFICATION
+                    CHECKSUM = checksumTCP(IPSrc, IPDest, protocol, THL, PortSrc, PortDest, trame[debut_tcp:])
                     #TRAITEMENT DES FLAGS
                     flags = "[ ACK ]"
-
                     #ACK
                     if(FLAGS == ("0","1","0","0","0","0")):
                         if(port_prec == port_dec(PortSrc)):
@@ -75,5 +72,5 @@ def fragmentation_tcp(Trames, SN, AN, data_length, WS1, WS2, port1, port2, port_
                         Comment += " [TCP segment of a reassembled PDU]"
                     
             #AJOUT DU COMMENTAIRE DANS LE TABLEAU
-            Tab_Comment.append((Comment, dernier))
+            Tab_Comment.append((Comment, CHECKSUM))
     return Tab_Comment

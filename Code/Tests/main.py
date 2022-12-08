@@ -43,7 +43,6 @@ FRAG = 0
 for trame in Trames :
     if(REQUEST == 0):
         FRAG = 0
-    dernier = TRUE #DERNIER COUCHE 
     #TEST ETHERNET
     if(lectureEthernet(trame) != None):
         MACdst, MACsrc, type = lectureEthernet(trame)
@@ -55,7 +54,6 @@ for trame in Trames :
         if(type != "0800"):
             print("Le type ne correspond pas a IP")
             Comment += " [TYPE DOES'T MATCH IP]"
-            dernier = FALSE
         elif(lectureIPv4(trame) != None):
             IHL, protocol, IPSrc, IPDest, option, TotalLength, DF, MF, offset, TTL = lectureIPv4(trame)
             Comment = "IPv4: " + IPv4_dec(IPSrc) + " -> " + IPv4_dec(IPDest) + " protocol = " + protocol + " TTL = " + str(TTL)
@@ -84,7 +82,6 @@ for trame in Trames :
             if(protocol != "06"):
                 print("Le protocole ne correspond pas a TCP")
                 Comment += " [PROTOCOL DOES'T MATCH TCP]"
-                dernier = FALSE
             elif(lectureTCP(trame[debut_tcp:]) != None):
                 HTTP, PortSrc, PortDest, THL, FLAGS, Win, OPT, data = lectureTCP(trame[debut_tcp:])
 
@@ -92,8 +89,10 @@ for trame in Trames :
                 Tab_PortSrc.append((IPv4_dec(IPSrc), port_dec(PortSrc)))
                 Tab_PortDest.append((IPv4_dec(IPDest), port_dec(PortDest)))
 
-                debut_http = debut_tcp + THL*8
+                #VERIFICATION
+                CHECKSUM = checksumTCP(IPSrc, IPDest, protocol, THL, PortSrc, PortDest, trame[debut_tcp:])
 
+                debut_http = debut_tcp + THL*8
                 #FRAGMENTATION TCP
                 if(REQUEST == 1):
                     if(premier):
@@ -108,7 +107,7 @@ for trame in Trames :
                         #TRAME HTTP FRAGMENTE
                         version, code, message, contentType = lectureHTTPrep(HTTP_Frag)
                         Comment_Frag = "HTTP: " + version + " " + code + " " + message + " " + contentType
-                        Tab_Comment.append((Comment_Frag, dernier))
+                        Tab_Comment.append((Comment_Frag, CHECKSUM))
                         FRAG = 1
                         REQUEST = 0
                         SN_Frag = 0
@@ -228,10 +227,10 @@ for trame in Trames :
                     if(lectureHTTPrep(trame[debut_http:]) != None):
                         version, code, message, contentType = lectureHTTPrep(trame[debut_http:])
                         Comment = "HTTP: " + version + " " + code + " " + message + " " + contentType
-    #AJOUT DU COMMENTAIRE DANS LE TABLEAU
-    if(FRAG == 0):
-        Tab_Comment.append((Comment, dernier))
-        #print(Comment)
+        #AJOUT DU COMMENTAIRE DANS LE TABLEAU
+        if(FRAG == 0):
+            Tab_Comment.append((Comment, CHECKSUM))
+            #print(Comment)
 #print(Tab_PortSrc)
 #print(Tab_PortDest)
 #print(Tab_Comment)

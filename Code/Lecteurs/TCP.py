@@ -64,3 +64,38 @@ def lectureTCP(trame):
     else:
         data = trame[40:]
     return (HTTP, PortSrc, PortDest, THL, FLAGS, Win, OPT, data)
+
+def checksumTCP(IPsrc, IPdest, Protocol, THL, portSrc, portDest, trame):
+    if trame is None:
+        print("Trame vide")
+        return None
+    somme = 0 
+    somme += int(IPsrc[0:2],16)
+    somme += int(IPsrc[2:4],16)
+    somme += int(IPdest[0:2],16)
+    somme += int(IPdest[2:4],16)
+    somme += int(Protocol,16)
+    somme += THL
+    somme += int(portSrc,16)
+    somme += int(portDest,16)
+
+    i = 24
+    while(i < len(trame)):
+        somme += int(trame[i:i+2],16)
+        i += 2
+    
+    binaire = bin(somme)[2:].zfill(16)    
+    
+    #print(binaire)
+    taille = len(binaire)
+    if(taille > 16):
+        indice = taille - 16
+        b = binaire[0:indice]
+        binaire = binaire[indice:]
+        somme = int(binaire,2)
+        somme += int(b,2)
+        binaire = hexaToBinary(hex(somme)[2:])
+    
+    return  binaire ==  "1111111111111111"
+
+    
