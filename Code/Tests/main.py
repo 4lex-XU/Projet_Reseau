@@ -24,9 +24,11 @@ data_length = 0
 port_prec = 0
 SN = 0
 AN = 0
-#Window Scale et port des 2 machines
+#Window Scale / MSS et port des 2 machines
 WS1 = 0
 WS2 = 0
+MSS1 = 0
+MSS2 = 0
 port1 = 0
 port2 = 0
 #Fragmentation au niveau TCP
@@ -84,7 +86,11 @@ for trame in Trames :
                 Comment += " [PROTOCOL DOES'T MATCH TCP]"
             elif(lectureTCP(trame[debut_tcp:]) != None):
                 HTTP, PortSrc, PortDest, THL, FLAGS, Win, OPT, data = lectureTCP(trame[debut_tcp:])
-
+        
+                #PADDING
+                if(TotalLength == THL*4):
+                    data = ""
+            
                 #AJOUT DANS LES TABLEAUX DE PORT SOURCE ET DESTINATION 
                 Tab_PortSrc.append((IPv4_dec(IPSrc), port_dec(PortSrc)))
                 Tab_PortDest.append((IPv4_dec(IPDest), port_dec(PortDest)))
@@ -96,29 +102,30 @@ for trame in Trames :
                 #FRAGMENTATION TCP
                 if(REQUEST == 1):
                     if(premier):
-                        port_Frag = port_dec(PortSrc)
-                        HTTP_Frag = trame[debut_http:]
-                        premier = FALSE
-                    if(FLAGS[2] == "1"):
-                        Comment_bis = fragmentation_tcp(Trames_Frag, SN_Frag, AN_Frag, data_Frag, WS1, WS2, port1, port2, port_prec, port_Frag)
-                        #ECHANGE DE COMMENTAIRE
-                        for i in range(len(Trames_Frag)):
-                            Tab_Comment[len(Tab_Comment)-len(Trames_Frag)+i] = Comment_bis[i]
-                        #TRAME HTTP FRAGMENTE
-                        version, code, message, contentType = lectureHTTPrep(HTTP_Frag)
-                        Comment_Frag = "HTTP: " + version + " " + code + " " + message + " " + contentType
-                        Tab_Comment.append((Comment_Frag, CHECKSUM))
-                        FRAG = 1
-                        REQUEST = 0
-                        SN_Frag = 0
-                        AN_Frag = 0
-                        port_Frag = 0
-                        data_Frag = 0
-                        Trames_Frag = []
-                        HTTP_Frag = []
-                        premier = TRUE
-                    else: 
-                        Trames_Frag.append(trame)
+                        if((port_dec(PortSrc) == port1 and TotalLength-THL*4 >= MSS1) or (port_dec(PortSrc) == port2 and TotalLength-THL*4 >= MSS2)):
+                            port_Frag = port_dec(PortSrc)
+                            HTTP_Frag = trame[debut_http:]
+                            premier = FALSE
+                    elif(FLAGS[2] == "1"):
+                        if((port_dec(PortSrc) == port1 and TotalLength-THL*4 < MSS1) or (port_dec(PortSrc) == port2 and TotalLength-THL*4 < MSS2)):
+                            Comment_bis = fragmentation_tcp(Trames_Frag, SN_Frag, AN_Frag, data_Frag, WS1, WS2, MSS1, MSS2, port1, port2, port_prec, port_Frag)
+                            #ECHANGE DE COMMENTAIRE
+                            for i in range(len(Trames_Frag)):
+                                Tab_Comment[len(Tab_Comment)-len(Trames_Frag)+i] = Comment_bis[i]
+                            #TRAME HTTP FRAGMENTE
+                            version, code, message, contentType = lectureHTTPrep(HTTP_Frag)
+                            Comment_Frag = "HTTP: " + version + " " + code + " " + message + " " + contentType
+                            Tab_Comment.append((Comment_Frag, CHECKSUM))
+                            FRAG = 1
+                            REQUEST = 0
+                            SN_Frag = 0
+                            AN_Frag = 0
+                            port_Frag = 0
+                            data_Frag = 0
+                            Trames_Frag = []
+                            HTTP_Frag = []
+                            premier = TRUE
+                    Trames_Frag.append(trame)
 
                 #TRAITEMENT DES FLAGS
                 flags = "["
@@ -139,6 +146,7 @@ for trame in Trames :
                 #SYN
                 if(FLAGS == ("0","0","0","0","1","0")):
                     port1 = port_dec(PortSrc)
+                    MSS1 = OPT[0]
                     WS1 = OPT[4]
                     data_length = 0
                     SN = 0
@@ -147,6 +155,7 @@ for trame in Trames :
                 #SYN/ACK
                 if(FLAGS == ("0","1","0","0","1","0")):
                     port2 = port_dec(PortSrc)
+                    MSS2 = OPT[0]
                     WS2 = OPT[4]
                     AN = SN+1
                     flags += " SN = " + str(SN) + " AN = " + str(AN)

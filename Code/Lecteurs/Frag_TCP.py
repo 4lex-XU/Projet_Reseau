@@ -12,7 +12,7 @@ from Interface.interface import *
 #declaration des tableaux 
 Tab_Comment = []
 
-def fragmentation_tcp(Trames, SN, AN, data_length, WS1, WS2, port1, port2, port_prec, port_Frag):
+def fragmentation_tcp(Trames, SN, AN, data_length, WS1, WS2, MSS1, MSS2, port1, port2, port_prec, port_Frag):
     for trame in Trames :
         #TEST ETHERNET
         if(lectureEthernet(trame) != None):
@@ -33,8 +33,19 @@ def fragmentation_tcp(Trames, SN, AN, data_length, WS1, WS2, port1, port2, port_
                     HTTP, PortSrc, PortDest, THL, FLAGS, Win, OPT, data = lectureTCP(trame[debut_tcp:])
                     #VERIFICATION
                     CHECKSUM = checksumTCP(IPSrc, IPDest, protocol, THL, PortSrc, PortDest, trame[debut_tcp:])
+
+                    #PADDING
+                    if(TotalLength == THL*4):
+                        data = ""
+                        
                     #TRAITEMENT DES FLAGS
-                    flags = "[ ACK ]"
+                    flags = "["
+                    if(FLAGS[1] == "1"):
+                        flags += " ACK"
+                    if(FLAGS[2] == "1"):
+                        flags += " PSH"
+                    flags += " ]"
+
                     #ACK
                     if(FLAGS == ("0","1","0","0","0","0")):
                         if(port_prec == port_dec(PortSrc)):
@@ -45,7 +56,17 @@ def fragmentation_tcp(Trames, SN, AN, data_length, WS1, WS2, port1, port2, port_
                             SN = AN
                             AN = tmp+data_length
                             flags += " SN = " + str(SN) + " AN = " + str(AN)
-                    
+                    #PUSH/ACK
+                    if(FLAGS == ("0","1","1","0","0","0")):
+                        if(port_prec == port_dec(PortSrc)):
+                            SN = SN+data_length
+                            flags += " SN = " + str(SN) + " AN = " + str(AN)
+                        else:
+                            tmp = SN
+                            SN = AN
+                            AN = tmp+data_length
+                            flags += " SN = " + str(SN) + " AN = " + str(AN)
+
                     data_length = len(data)//2
                     port_prec = port_dec(PortSrc)
                     
@@ -68,7 +89,7 @@ def fragmentation_tcp(Trames, SN, AN, data_length, WS1, WS2, port1, port2, port_
                         Comment += " SACK_PERM"
 
                     Comment += " TSval = " + str(OPT[2]) + " TSecr = " + str(OPT[3]) + " WS = " + str(OPT[4]) 
-                    if(port_Frag == port_dec(PortSrc)):
+                    if((port_Frag == port1 and TotalLength-THL*4 >= MSS1) or (port_Frag == port2 and TotalLength-THL*4 >= MSS2)):
                         Comment += " [TCP segment of a reassembled PDU]"
                     
             #AJOUT DU COMMENTAIRE DANS LE TABLEAU

@@ -1,6 +1,11 @@
-TCP: 33971 -> 80 [ ACK ] SN = 0 AN = 0 Win = 30580 Data_length = 0 TSval = 7317357 TSecr = 19332365 WS = 0
-HTTP: GET /pix/1bluenav0_a.gif HTTP/1.1
-TCP: 80 -> 33971 [ ACK ] SN = 0 AN = 537 Win = 63218 Data_length = 1390 TSval = 19332368 TSecr = 7317357 WS = 0 [TCP segment of a reassembled PDU]
-TCP: 33971 -> 80 [ ACK ] SN = 537 AN = 1390 Win = 5840 Data_length = 0 TSval = 7317298 TSecr = 0 WS = 0
-HTTP: HTTP/1.1 200 OK image/gif
-TCP: 33971 -> 80 [ ACK ] SN = 537 AN = 2698 Win = 37530 Data_length = 0 TSval = 7317378 TSecr = 19332368 WS = 0
+145.254.160.237 -> 65.208.228.223		TCP: 3372 -> 80 [ SYN ] SN = 0 Win = 8760 Data_length = 0 MSS = 1460 SACK_PERM TSval = 0 TSecr = 0 WS = 0
+65.208.228.223 -> 145.254.160.237		TCP: 80 -> 3372 [ ACK SYN ] SN = 0 AN = 1 Win = 5840 Data_length = 0 MSS = 1380 SACK_PERM TSval = 0 TSecr = 0 WS = 0
+145.254.160.237 -> 65.208.228.223		TCP: 3372 -> 80 [ ACK ] SN = 1 AN = 1 Win = 0 Data_length = 0 TSval = 0 TSecr = 0 WS = 0
+145.254.160.237 -> 65.208.228.223		HTTP: GET /download.html HTTP/1.1
+65.208.228.223 -> 145.254.160.237		TCP: 80 -> 3372 [ ACK ] SN = 1 AN = 480 Win = 0 Data_length = 0 TSval = 0 TSecr = 0 WS = 0
+65.208.228.223 -> 145.254.160.237		HTTP: HTTP/1.1 200 OK text/html; charset=ISO-8859-1
+145.254.160.237 -> 65.208.228.223		TCP: 3372 -> 80 [ ACK ] SN = 480 AN = 1381 Win = 0 Data_length = 0 TSval = 0 TSecr = 0 WS = 0
+65.208.228.223 -> 145.254.160.237		IPv4: 65.208.228.223 -> 145.254.160.237 protocol = 06 TTL = 47 [No Option] [Don't Fragment] Offset = 0 [No fragment]
+145.254.160.237 -> 65.208.228.223		TCP: 3372 -> 80 [ ACK ] SN = 480 AN = 2761 Win = 0 Data_length = 0 TSval = 0 TSecr = 0 WS = 0
+65.208.228.223 -> 145.254.160.237		IPv4: 65.208.228.223 -> 145.254.160.237 protocol = 06 TTL = 47 [No Option] [Don't Fragment] Offset = 0 [No fragment]
+65.208.228.223 -> 145.254.160.237		IPv4: 65.208.228.223 -> 145.254.160.237 protocol = 06 TTL = 47 [No Option] [Don't Fragment] Offset = 0 [No fragment]

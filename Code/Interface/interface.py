@@ -77,7 +77,7 @@ def interface (IPportsrc, IPportdst, commentaire, nom_fichier="") :
             canvas.create_window(35 + 120*(filtreIP.index(j[0])), 80 + 20*(indice), anchor=NW, window=port2)
             com = Label(canvas, text = filtreCom[indice][0],bg = colorB, fg = colorF)
             canvas.create_window(10 + 120*(len(filtreIP)), 80 + 20*(indice), anchor=NW, window=com)
-            fichier.write(filtreCom[indice][0] + "\n")
+            fichier.write(i[0] + " -> "+ j[0] + "\t\t" +  filtreCom[indice][0] + "\n")
             indice += 1
             
             tailleFleche = 120*(filtreIP.index(j[0])) - 120*(filtreIP.index(i[0])) 
@@ -151,10 +151,9 @@ def interface (IPportsrc, IPportdst, commentaire, nom_fichier="") :
         canvas.create_window(35 + 120*(IP.index(j[0])), 80 + 20*(indice), anchor=NW, window=port2)
         com = Label(canvas, text = commentaire[indice][0], bg = colorB, fg = colorF)
         canvas.create_window(10 + 120*(len(IP)), 80 + 20*(indice), anchor=NW, window=com)
-        fichier.write(commentaire[indice][0] + "\n")
+        print(commentaire[indice][0])
+        fichier.write(i[0] + " -> "+ j[0] + "\t\t" + commentaire[indice][0] + "\n")
         indice += 1
-        # ecriture dans le fichier texte
-        #fichier.write("\t\t\t\t\t"*IP.index(i[0]) + str(i[1]) + "\t\t\t\t\t"*IP.index(j[0]) + str(j[1]) + "                "*(len(IP)) + commentaire[indice] + "\n")
         
         tailleFleche = 120*(IP.index(j[0])) - 120*(IP.index(i[0])) 
         # faire une flèche de taille tailleFleche

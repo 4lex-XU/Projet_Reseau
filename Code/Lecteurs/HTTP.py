@@ -17,7 +17,9 @@ def lectureHTTPreq(trame) :
     # transforme le code hexa en ascii
     methode = hexaToASCII(methode)
     contenu = hexaToASCII(contenu)
-    
+    if(methode == None or contenu == None):
+        return None
+
     return (methode, contenu)
     
 def lectureHTTPrep(trame) :
@@ -39,5 +41,7 @@ def lectureHTTPrep(trame) :
     code = hexaToASCII(trame[indiceVer+2:indiceCode])
     message = hexaToASCII(trame[indiceCode+2:indiceMsg])
     contentType = hexaToASCII(trame[indiceContentType1+28:indiceContentType2])
-    
+    if(version == None or code == None or message == None or contentType == None):
+        return None
+
     return (version, code, message, contentType)
