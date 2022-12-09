@@ -1,0 +1,8 @@
+Pour lancer le visualisateur de trames :
+    1 - Il faut mettre le fichier contenant les trames dans le dossier "trames" dans le dossier Trames
+    2 - La commande pour aller dans le répertoire correspondant au fichier test est: cd ./Code/Tests
+    3 - Pour exécuter le fichier main et afficher le visualisateur, il faut entrer la commande suivante dans le terminal: python main.py [nom_du_fichier_trame.txt] [nom_du_fichier_de_sauvegarde.txt]
+
+    Dans le visualisateur de trames : 
+        Vous pourrez filtrer selon l'IP et selon le protocole
+        Le fichier de sauvegarde enregistre le dernier filtre appliqué 

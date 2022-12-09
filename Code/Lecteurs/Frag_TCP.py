@@ -31,9 +31,7 @@ def fragmentation_tcp(Trames, SN, AN, data_length, WS1, WS2, MSS1, MSS2, port1, 
                     print("Le protocole ne correspond pas a TCP")
                 elif(lectureTCP(trame[debut_tcp:]) != None):
                     HTTP, PortSrc, PortDest, THL, FLAGS, Win, OPT, data = lectureTCP(trame[debut_tcp:])
-                    #VERIFICATION
-                    CHECKSUM = checksumTCP(IPSrc, IPDest, protocol, THL, PortSrc, PortDest, trame[debut_tcp:])
-
+                
                     #PADDING
                     if(TotalLength == THL*4):
                         data = ""
@@ -93,5 +91,5 @@ def fragmentation_tcp(Trames, SN, AN, data_length, WS1, WS2, MSS1, MSS2, port1, 
                         Comment += " [TCP segment of a reassembled PDU]"
                     
             #AJOUT DU COMMENTAIRE DANS LE TABLEAU
-            Tab_Comment.append((Comment, CHECKSUM))
+            Tab_Comment.append(Comment)
     return Tab_Comment

@@ -40,8 +40,8 @@ def interface (IPportsrc, IPportdst, commentaire, nom_fichier="") :
             filtreIPportdstBouble = []
             j=0
             for c in filtreCom :
-                i = c[0].find(":")
-                if (protocole == c[0][0:i]) :
+                i = c.find(":")
+                if (protocole == c[0:i]) :
                     filtreComBouble.append(c)
                     filtreIPportsrcBouble.append(filtreIPportsrc[j])
                     filtreIPportdstBouble.append(filtreIPportdst[j])
@@ -63,21 +63,16 @@ def interface (IPportsrc, IPportdst, commentaire, nom_fichier="") :
         # place les ports et les commentaires
         indice = 0
         for (i, j) in zip(filtreIPportsrc, filtreIPportdst) :  
-            colorB = "" 
-            colorF = ""
-            if(commentaire[indice][1] == 1) :
-                colorB = "#CAF5BC"
-                colorF = "black"
-            else :
-                colorB = "#C63B3B"
-                colorF = "white"
+            colorB = "#CAF5BC"
+            colorF = "black"
+
             port1 = Label(canvas, text = i[1],bg = colorB, fg = colorF)
             canvas.create_window(35 + 120*(filtreIP.index(i[0])), 80 + 20*(indice), anchor=NW, window=port1)
             port2 = Label(canvas, text = j[1],bg = colorB, fg = colorF)
             canvas.create_window(35 + 120*(filtreIP.index(j[0])), 80 + 20*(indice), anchor=NW, window=port2)
-            com = Label(canvas, text = filtreCom[indice][0],bg = colorB, fg = colorF)
+            com = Label(canvas, text = filtreCom[indice],bg = colorB, fg = colorF)
             canvas.create_window(10 + 120*(len(filtreIP)), 80 + 20*(indice), anchor=NW, window=com)
-            fichier.write(i[0] + " -> "+ j[0] + "\t\t" +  filtreCom[indice][0] + "\n")
+            fichier.write(i[0] + " -> "+ j[0] + "\t\t" +  filtreCom[indice] + "\n")
             indice += 1
             
             tailleFleche = 120*(filtreIP.index(j[0])) - 120*(filtreIP.index(i[0])) 
@@ -137,22 +132,18 @@ def interface (IPportsrc, IPportdst, commentaire, nom_fichier="") :
     # place les ports et les commentaires
     indice = 0
     for (i, j) in zip(IPportsrc, IPportdst) : 
-        colorB = "" 
-        colorF = ""
-        if(commentaire[indice][1] == 1) :
-            colorB = "#CAF5BC"
-            colorF = "black"
-        else :
-            colorB = "#C63B3B"
-            colorF = "white"
+
+        colorB = "#CAF5BC"
+        colorF = "black"
+
         port1 = Label(canvas, text = i[1],bg = colorB, fg = colorF)
         canvas.create_window(35 + 120*(IP.index(i[0])) , 80 + 20*(indice), anchor=NW, window=port1)
         port2 = Label(canvas, text = j[1],bg = colorB, fg = colorF)
         canvas.create_window(35 + 120*(IP.index(j[0])), 80 + 20*(indice), anchor=NW, window=port2)
-        com = Label(canvas, text = commentaire[indice][0], bg = colorB, fg = colorF)
+        com = Label(canvas, text = commentaire[indice], bg = colorB, fg = colorF)
         canvas.create_window(10 + 120*(len(IP)), 80 + 20*(indice), anchor=NW, window=com)
-        print(commentaire[indice][0])
-        fichier.write(i[0] + " -> "+ j[0] + "\t\t" + commentaire[indice][0] + "\n")
+        print(commentaire[indice])
+        fichier.write(i[0] + " -> "+ j[0] + "\t\t" + commentaire[indice] + "\n")
         indice += 1
         
         tailleFleche = 120*(IP.index(j[0])) - 120*(IP.index(i[0])) 
@@ -188,7 +179,7 @@ def nbIP(p, IP = []) :
 
 def listeDeroulante (IP, fenetre) :
     # Création des listes déroulante
-    listeProtocoles = ["Tous les protocoles", "TCP" , "HTTP"]
+    listeProtocoles = ["Tous les protocoles", "Ethernet", "IPv4" ,"TCP" , "HTTP"]
     listeAdressesIP = ["Toutes les IP"] + IP
     
     # Création de la Combobox via la méthode ttk.Combobox()
